@@ -1,4 +1,4 @@
-﻿Register-ArgumentCompleter -Native -CommandName vagrant -ScriptBlock {
+Register-ArgumentCompleter -Native -CommandName vagrant -ScriptBlock {
     param($wordToComplete, [System.Management.Automation.Language.CommandBaseAst]$commandAst, $cursorPosition)
 
     $vagrantCommands = @{
@@ -345,27 +345,10 @@
         break
     }
 
-    foreach ($_ in (Select-Commands $vagrantCommands $path).Keys) {
-        if ($_ -like '@*') {
-            switch ($_) {
-                '@VM_NAME' {
-                    foreach ($row in vagrant status | Select-Object -Skip 2) {
-                        if ($row -eq '') {
-                            break
-                        }
-                        $tmp = $row.Split(' ', [System.StringSplitOptions]::None)[0]
-                        if ($tmp.Contains($wordToComplete)) {
-                            [System.Management.Automation.CompletionResult]::new(
-                                $tmp,
-                                $tmp,
-                                [System.Management.Automation.CompletionResultType]::Text,
-                                $tmp
-                            )
-                        }
-                    }
-                }
-            }
-        } elseif ($_.Contains($wordToComplete)) {
+    Contains-Words (Select-Commands $vagrantCommands $path).Keys |
+        Where-Object {([string]$_).Contains($wordToComplete)}
+        Sort-Object -Property @{Expression={$_.StartsWith('st')};Descending=$true},@{Expression='Length';Ascending=$true} | 
+        ForEach-Object {
             [System.Management.Automation.CompletionResult]::new(
                 $_,
                 $_,
@@ -373,7 +356,6 @@
                 $_
             )
         }
-    }
 }
 
 
@@ -384,6 +366,27 @@ function Select-Commands ($source, $path) {
         $c = $c[$p]
     }
     $c
+}
+
+
+
+function Contains-Words ($source) {
+   foreach ($_ in $source) {
+        if ($_ -like '@*') {
+            switch ($_) {
+                '@VM_NAME' {
+                    foreach ($row in vagrant status | Select-Object -Skip 2) {
+                        if ($row -eq '') {
+                            break
+                        }
+                        $row.Split(' ', [System.StringSplitOptions]::None)[0]
+                    }
+                }
+            }
+        } else {
+            $_
+        }
+    }
 }
 
 
