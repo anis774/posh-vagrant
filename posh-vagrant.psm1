@@ -1,4 +1,4 @@
-Register-ArgumentCompleter -Native -CommandName vagrant -ScriptBlock {
+﻿Register-ArgumentCompleter -Native -CommandName vagrant -ScriptBlock {
     param($wordToComplete, [System.Management.Automation.Language.CommandBaseAst]$commandAst, $cursorPosition)
 
     $vagrantCommands = @{
@@ -245,7 +245,7 @@ Register-ArgumentCompleter -Native -CommandName vagrant -ScriptBlock {
                 '-h' = $null;
                 '--help' = $null;
                 '@VM_NAME' = $null;
-                # name
+                '@SNAPSHOT_NAME' = $null;
             };
             'list' = @{
                 '-h' = $null;
@@ -273,7 +273,7 @@ Register-ArgumentCompleter -Native -CommandName vagrant -ScriptBlock {
                 '-h' = $null;
                 '--help' = $null;
                 '@VM_NAME' = $null;
-                # name
+                '@SNAPSHOT_NAME' = $null;
             };
             'save' = @{
                 '-h' = $null;
@@ -347,7 +347,7 @@ Register-ArgumentCompleter -Native -CommandName vagrant -ScriptBlock {
 
     Contains-Words (Select-Commands $vagrantCommands $path).Keys |
         Where-Object {([string]$_).Contains($wordToComplete)}
-        Sort-Object -Property @{Expression={$_.StartsWith('st')};Descending=$true},@{Expression='Length';Ascending=$true} | 
+        Sort-Object -Property @{Expression={$_.StartsWith('st')};Descending=$true},@{Expression='Length';Ascending=$true} |
         ForEach-Object {
             [System.Management.Automation.CompletionResult]::new(
                 $_,
@@ -381,6 +381,9 @@ function Contains-Words ($source) {
                         }
                         $row.Split(' ', [System.StringSplitOptions]::None)[0]
                     }
+                }
+                '@SNAPSHOT_NAME' {
+                    vagrant snapshot list |  Where-Object {(-not $_.StartsWith('=')) -and (-not $_.StartsWith(' '))}
                 }
             }
         } else {
