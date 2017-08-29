@@ -346,8 +346,8 @@
     }
 
     Contains-Words (Select-Commands $vagrantCommands $path).Keys |
-        Where-Object {([string]$_).Contains($wordToComplete)}
-        Sort-Object -Property @{Expression={$_.StartsWith('st')};Descending=$true},@{Expression='Length';Ascending=$true} |
+        Where-Object {$_.Contains($wordToComplete)} |
+        Sort-Object -Property @{Expression={$_.StartsWith($wordToComplete)};Descending=$true},@{Expression='Length';Ascending=$true} |
         ForEach-Object {
             [System.Management.Automation.CompletionResult]::new(
                 $_,
