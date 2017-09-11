@@ -1,5 +1,5 @@
 ﻿Register-ArgumentCompleter -Native -CommandName vagrant -ScriptBlock {
-    param($wordToComplete, [System.Management.Automation.Language.CommandBaseAst]$commandAst, $cursorPosition)
+    param([string]$wordToComplete, [System.Management.Automation.Language.CommandBaseAst]$commandAst, [int]$cursorPosition)
 
     $vagrantCommands = @{
         'box' = @{
