@@ -93,7 +93,7 @@
             '@VM_NAME' = $null;
             # id
         };
-        'global_status' = @{
+        'global-status' = @{
             '--prune' = $null;
             '-h' = $null;
             '--help' = $null;
